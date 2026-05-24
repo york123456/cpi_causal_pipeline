@@ -42,7 +42,7 @@ class Config:
     logs_dir: Path = WORKDIR / "logs"              # 執行日誌
     plots_dir: Path = WORKDIR / "correlated_plots" # 強相關配對圖
     ml_dir: Path = WORKDIR / "ml_plots"            # 機器學習比較圖
-    report_dir: Path = WORKDIR / "report"          # 最終 index.html 報告
+    report_dir: Path = WORKDIR / "docs"          # 最終 index.html 報告
 
     # 主要中介檔（沿用原 notebook 命名，方便對照）
     data_json: Path = WORKDIR / "data.json"
