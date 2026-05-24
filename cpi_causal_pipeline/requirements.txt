@@ -1,0 +1,36 @@
+# ==============================================================================
+#  requirements.txt  ─  套件需求清單
+# ==============================================================================
+#  建議環境：Python 3.11（原專案於 3.11.11 / Windows 驗證）
+#
+#  安裝方式：
+#      pip install -r requirements.txt
+#
+#  分組說明：
+#    [核心]  缺少會讓對應階段無法執行（管線會優雅跳過或沿用既有結果）。
+#    [選用]  只有開啟特定階段時才需要；不裝也能跑其餘流程。
+# ==============================================================================
+
+# ---------- 核心：資料處理與繪圖（pipeline / tools / build_report 必需）----------
+pandas>=2.2
+numpy>=1.26
+scipy>=1.13
+matplotlib>=3.9
+openpyxl>=3.1            # CSV → XLSX
+requests                # 抓取主計總處 API
+scikit-learn>=1.4       # 機器學習回歸比較（stage 9）
+
+# ---------- 選用：時間序列預測（stage 3 / 4）----------
+statsmodels>=0.14        # ARIMA 長期預測
+pycausalimpact           # CausalImpact 介入分析（stage 4，預設關閉）
+
+# ---------- 選用：因果探索引擎（stage 6 causal_engine）----------
+# 這組較重；若不安裝，管線會自動沿用 results/ 內既有的有效產出。
+dowhy==0.12
+causal-learn==0.1.4.1
+pgmpy==0.1.26
+networkx>=3.4
+EMD-signal               # 提供 PyEMD（經驗模態分解）
+# pygraphviz             # 繪製因果圖；需先安裝系統套件 graphviz / libgraphviz-dev
+                         #   Ubuntu/Debian: sudo apt-get install -y graphviz libgraphviz-dev pkg-config
+                         #   安裝後再： pip install pygraphviz
