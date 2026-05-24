@@ -46,7 +46,7 @@ def _img_tag(path: Path, alt: str = "") -> Optional[str]:
     return (f'<img loading="lazy" alt="{html.escape(alt)}" '
             f'src="data:image/png;base64,{b64}">')
 
-
+'''
 def _csv_table(path: Path, max_rows: int = MAX_TABLE_ROWS,
                header: Optional[List[str]] = None) -> Optional[str]:
     """把 CSV 讀成 HTML 表格（截斷過長者並標註）。檔案不存在則回 None。"""
@@ -75,6 +75,58 @@ def _csv_table(path: Path, max_rows: int = MAX_TABLE_ROWS,
             if truncated else "")
     return (f'<div class="tablewrap"><table><thead><tr>{thead}</tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>{note}')
+'''
+
+def _csv_table(path: Path, max_rows: int = MAX_TABLE_ROWS,
+               header: Optional[List[str]] = None,
+               tail: bool = False,                # 新增：是否顯示倒數幾列
+               sort_by: Optional[str] = None,     # 新增：排序的欄位名稱
+               ascending: bool = True             # 新增：遞增(True)或遞減(False)排序
+               ) -> Optional[str]:
+    """把 CSV 讀成 HTML 表格（截斷過長者並標註，支援排序與顯示末尾）。檔案不存在則回 None。"""
+    p = Path(path)
+    if not p.exists():
+        return None
+    try:
+        df = (pd.read_csv(p, header=None, names=header)
+              if header else pd.read_csv(p))
+    except Exception as e:
+        logger.warning("讀取表格 %s 失敗：%s", p, e)
+        return None
+
+    # --- 1. 處理排序 ---
+    if sort_by:
+        if sort_by in df.columns:
+            df = df.sort_values(by=sort_by, ascending=ascending)
+        else:
+            logger.warning(f"找不到指定的排序欄位 '{sort_by}'，將維持原始順序。")
+
+    total = len(df)
+    truncated = total > max_rows
+
+    # --- 2. 處理截斷 (Head vs Tail) ---
+    if tail:
+        view = df.tail(max_rows)
+        row_pos_text = "後"
+    else:
+        view = df.head(max_rows)
+        row_pos_text = "前"
+
+    thead = "".join(f"<th>{html.escape(str(c))}</th>" for c in view.columns)
+    rows = []
+    for _, r in view.iterrows():
+        tds = "".join(
+            f"<td>{html.escape(f'{v:.4f}' if isinstance(v, float) else str(v))}</td>"
+            for v in r)
+        rows.append(f"<tr>{tds}</tr>")
+        
+    note = (f'<p class="note">＊僅顯示{row_pos_text} {max_rows} 列，共 {total} 列。完整資料見原始 CSV。</p>'
+            if truncated else "")
+    
+    return (f'<div class="tablewrap"><table><thead><tr>{thead}</tr></thead>'
+            f'<tbody>{"".join(rows)}</tbody></table></div>{note}')
+
+
 
 
 def _section(num: str, sid: str, title: str, body_parts: List[str],
@@ -118,7 +170,7 @@ def build_report(cfg) -> Path:
     add(_section(
         "01", "overview", "CPI 資料總覽",
         [_img_tag(cfg.cpi_plot, "CPI 折線圖"),
-         _csv_table(cfg.cpi_csv)],
+         _csv_table(cfg.cpi_csv, tail=True)],
         "行政院主計總處消費者物價基本分類指數，涵蓋總指數與七大分類的長期月資料。"
     ), "overview", "資料總覽")
 
