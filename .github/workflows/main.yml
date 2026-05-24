@@ -104,6 +104,7 @@ jobs:
           git add cpi_data.xlsx
           git add arima_forecast_plot.png
           git add cpi_plot.png
+          git add docs
         
           git commit -m "chore: 系統自動更新資料夾檔案 [skip ci]"
           git pull --rebase origin main
