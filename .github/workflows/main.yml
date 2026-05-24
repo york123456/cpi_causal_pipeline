@@ -1,0 +1,88 @@
+name: Run Python Pipeline
+
+on:
+  schedule:
+    # 每天台灣時間早上 9 點執行 (UTC+8 → UTC 1 點)
+    - cron: '*/30 * * * *'
+  workflow_dispatch:  # 手動觸發
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./cpi_causal_pipeline
+
+    steps:
+    # 1. 取得你儲存庫中的程式碼
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # 2. 設定 Python 環境 (你可以依據你的專案修改版本)
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' 
+
+    # 3. 安裝 Linux 系統依賴套件
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y graphviz libgraphviz-dev pkg-config
+
+    # 4. 安裝 Python 依賴套件
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pygraphviz
+        pip install networkx==3.4.2
+
+    # 5. 執行你的 Python 腳本
+    - name: Run pipeline
+      run: |
+        python pipeline.py
+
+
+    # 新增以下步驟：自動將多層子資料夾打包提交
+    - name: Commit and Push Outputs
+      env:
+        # 使用 GitHub 自動產生的 Token 進行身分驗證，不需額外建立 Secret
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        # 1. 設定自動提交時的機器人身分
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+        
+
+        if [ -n "$(git status --porcelain)" ]; then
+          git add ml_plots
+          git add results
+          git add report
+          git add logs
+          git add correlated_plots
+          git add data.json
+          git add arima_forecast_data.csv
+          git add cpi_data.csv
+          git add Filteredlist.csv
+          git add cpi_data.xlsx
+          git add arima_forecast_plot.png
+          git add cpi_plot.png
+        
+          git commit -m "chore: 系統自動更新資料夾檔案 [skip ci]"
+          git pull --rebase origin main
+          git push origin main
+        else
+          echo "沒有偵測到任何檔案變更，跳過推送。"
+        fi
+        
+
+   
+       
