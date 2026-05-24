@@ -72,6 +72,35 @@ def setup_chinese_font(font_path: Path, font_family: str,
     （在可連網環境）也可由 download_url 取得，但離線時不強制。
     回傳 True 表示已成功掛上某種可顯示中文的字體。
     """
+    
+        
+    import sys
+    sys.stdout.reconfigure(encoding='utf-8')
+    
+    import os
+    import matplotlib.pyplot as plt
+    import matplotlib.font_manager as fm
+    
+    # 假設您把字體檔 'NotoSansTC-Regular.ttf' 放專案根目錄下
+    font_path = os.path.join(os.path.dirname(__file__), "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")
+    
+    if os.path.exists(font_path):
+        # 1. 動態註冊字體
+        fe = fm.FontEntry(fname=font_path, name="MyActionFont")
+        fm.fontManager.ttflist.insert(0, fe)
+        # 2. 全域指定
+        plt.rcParams["font.family"] = "MyActionFont"
+        print("成功載入專案字體！")
+        logger.info("已載入內附中文字體")
+        return True
+    else:
+        print("找不到字體檔案，將使用預設字體")
+        logger.warning("找不到任何中文字體，圖表中文可能顯示為方塊。"
+                   "可將 .ttf 放入 assets/ 或安裝系統 CJK 字體。")
+        return False
+    
+    
+    '''
     # 1) 優先使用內附字體
     if Path(font_path).exists():
         try:
@@ -97,7 +126,7 @@ def setup_chinese_font(font_path: Path, font_family: str,
     logger.warning("找不到任何中文字體，圖表中文可能顯示為方塊。"
                    "可將 .ttf 放入 assets/ 或安裝系統 CJK 字體。")
     return False
-
+    '''
 
 # =========================================================================== #
 # 1. 取得 CPI 原始資料（主計總處 API）
