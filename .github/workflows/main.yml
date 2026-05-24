@@ -17,6 +17,7 @@ jobs:
     env:
       LANG: "zh_TW.UTF-8"
       LC_ALL: "zh_TW.UTF-8" # 確保所有系統工具與 Log 都採用 UTF-8 編碼
+      PYTHONUTF8: 1
 
     defaults:
       run:
@@ -46,6 +47,31 @@ jobs:
         pip install -r requirements.txt
         pip install pygraphviz
         pip install networkx==3.4.2
+
+    - name: 安裝 zh_TW.UTF-8 locale
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y locales
+        sudo locale-gen zh_TW.UTF-8
+        sudo update-locale LANG=zh_TW.UTF-8
+
+        
+    - name: Install Noto Fonts
+      run: |
+        sudo apt-get update
+        # 安裝 Noto 基礎字型與繁體中文/日文/韓文 CJK 字型
+        sudo apt-get install -y fonts-noto-core fonts-noto-cjk
+
+    #- name: Test Font Installation (fc-list)
+      # 使用 grep 測試，若找不到 Noto，grep 會回傳錯誤碼 1 導致整個 CI 失敗（符合測試邏輯）
+      #run: |
+        #echo "=== 正在檢查系統中的 Noto 字型 ==="
+        #fc-list : family | grep "Noto" | sort -u
+        #fc-list :lang=zh
+    
+    - run: python -c "import matplotlib as mpl; import shutil; import os; shutil.rmtree(mpl.get_cachedir())"
+
+
 
     # 5. 執行你的 Python 腳本
     - name: Run pipeline
