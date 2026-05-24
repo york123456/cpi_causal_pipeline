@@ -14,6 +14,9 @@ on:
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
+    env:
+      LANG: "zh_TW.UTF-8"
+      LC_ALL: "zh_TW.UTF-8" # 確保所有系統工具與 Log 都採用 UTF-8 編碼
 
     defaults:
       run:
