@@ -55,7 +55,8 @@ class Config:
 
     # 中文字體（繪圖防亂碼）。先找本機 assets，再考慮線上下載。
     font_path: Path = WORKDIR / "assets" / "TaipeiSansTCBeta-Regular.ttf"
-    font_family: str = "Taipei Sans TC Beta"
+    #font_family: str = "Taipei Sans TC Beta"
+    font_family: str = "MyActionFont"
     font_download_url: str = (
         "https://drive.google.com/uc?id=1eGAsTN1HBpJAkeVM57_C7ccp7hbgSz3_&export=download"
     )
