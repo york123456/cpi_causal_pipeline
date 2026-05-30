@@ -1,0 +1,68 @@
+04:38:56 | INFO    | [setup_logging] 日誌系統就緒，記錄檔：/home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/logs/pipeline_20260530_043856.log
+04:38:56 | INFO    | [setup_chinese_font] 已載入內附中文字體
+04:38:56 | INFO    | [main] ================================================================
+04:38:56 | INFO    | [main]  台灣 CPI 因果分析管線啟動
+04:38:56 | INFO    | [main] ================================================================
+04:38:56 | INFO    | [_run_stage] ▶  開始階段：fetch_cpi
+04:38:56 | INFO    | [fetch_cpi_json] 向主計總處 API 請求資料 …
+04:38:58 | INFO    | [fetch_cpi_json] API 取得成功，已寫入 /home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/data.json
+04:38:58 | INFO    | [_run_stage] ✔  完成階段：fetch_cpi
+04:38:58 | INFO    | [_run_stage] ▶  開始階段：parse_and_plot
+04:38:58 | INFO    | [parse_cpi_json_to_csv] 已解析 328 期 × 8 類，寫入 /home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/cpi_data.csv
+04:38:59 | INFO    | [plot_cpi_overview] CPI 總覽圖已存：/home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/cpi_plot.png
+04:38:59 | INFO    | [_run_stage] ✔  完成階段：parse_and_plot
+04:38:59 | INFO    | [_run_stage] ▶  開始階段：arima_forecast
+04:38:59 | INFO    | [run_arima_forecast] 訓練 ARIMA(1, 1, 1) 於『總指數』(328 筆) …
+04:39:00 | INFO    | [run_arima_forecast] ARIMA 完成：/home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/arima_forecast_plot.png / /home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/arima_forecast_data.csv
+04:39:00 | INFO    | [_run_stage] ✔  完成階段：arima_forecast
+04:39:00 | INFO    | [_run_stage] ▶  開始階段：causal_impact
+04:39:01 | INFO    | [_run_stage] ✔  完成階段：causal_impact
+04:39:01 | INFO    | [_run_stage] ▶  開始階段：csv_to_xlsx
+04:39:02 | INFO    | [csv_to_xlsx] 已轉存 Excel：/home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/cpi_data.xlsx
+04:39:02 | INFO    | [_run_stage] ✔  完成階段：csv_to_xlsx
+04:39:02 | INFO    | [_run_stage] ▶  開始階段：causal_engine
+04:39:02 | INFO    | [read_and_preprocess] 因果引擎：讀取 /home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/cpi_data.xlsx
+04:39:02 | INFO    | [read_and_preprocess] 前處理完成，保留 8 欄。
+04:39:02 | INFO    | [perform_imf_decomposition] EMD 分解（最大層數 3）…
+04:39:02 | INFO    | [perform_imf_decomposition] EMD 完成，共 3 層有效 IMF。
+04:39:02 | INFO    | [run] ====== 層級：Original_Data ======
+04:39:04 | INFO    | [run_causal_analysis_and_export] [Original_Data] PC 演算法 …
+04:39:10 | INFO    | [run_causal_analysis_and_export] [Original_Data] DoWhy 估計與反駁 …
+04:41:13 | INFO    | [run] ====== 層級：IMF_1 ======
+04:41:13 | INFO    | [run_causal_analysis_and_export] [IMF_1] PC 演算法 …
+04:41:19 | INFO    | [run_causal_analysis_and_export] [IMF_1] DoWhy 估計與反駁 …
+04:43:21 | INFO    | [run] ====== 層級：IMF_2 ======
+04:43:21 | INFO    | [run_causal_analysis_and_export] [IMF_2] PC 演算法 …
+04:43:27 | INFO    | [run_causal_analysis_and_export] [IMF_2] DoWhy 估計與反駁 …
+04:45:28 | INFO    | [run] ====== 層級：IMF_3 ======
+04:45:28 | INFO    | [run_causal_analysis_and_export] [IMF_3] PC 演算法 …
+04:45:34 | INFO    | [run_causal_analysis_and_export] [IMF_3] DoWhy 估計與反駁 …
+04:47:34 | INFO    | [run] 因果引擎完成，耗時 512.7 秒。
+04:47:34 | INFO    | [_run_stage] ✔  完成階段：causal_engine
+04:47:34 | INFO    | [_run_stage] ▶  開始階段：filter_estimation
+04:47:34 | INFO    | [filter_estimation_to_list] 篩選 LR_Effect >= 1.0：保留 8 / 28 條邊 → /home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/Filteredlist.csv
+04:47:34 | INFO    | [_run_stage] ✔  完成階段：filter_estimation
+04:47:34 | INFO    | [_run_stage] ▶  開始階段：correlated_plots
+04:47:43 | INFO    | [build_correlated_plots] 強相關配對圖（真實資料）完成 8 張 → /home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/correlated_plots
+04:47:43 | INFO    | [_run_stage] ✔  完成階段：correlated_plots
+04:47:43 | INFO    | [_run_stage] ▶  開始階段：ml_regression
+04:47:44 | INFO    | [run_ml_regression] 最佳模型：SVM (向量機模型)（目標=總指數，特徵=['一.食物類']）
+04:47:44 | INFO    | [run_ml_regression] 機器學習回歸（真實資料）完成 → /home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/ml_plots
+04:47:44 | INFO    | [_run_stage] ✔  完成階段：ml_regression
+04:47:44 | INFO    | [_run_stage] ▶  開始階段：build_report
+04:47:45 | INFO    | [build_report] HTML 報告已產生：/home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/../docs/index.html（6 個章節）
+04:47:45 | INFO    | [_run_stage] ✔  完成階段：build_report
+04:47:45 | INFO    | [main] ================================================================
+04:47:45 | INFO    | [main]  執行摘要
+04:47:45 | INFO    | [main]    fetch_cpi          ✔ 成功
+04:47:45 | INFO    | [main]    parse_and_plot     ✔ 成功
+04:47:45 | INFO    | [main]    arima_forecast     ✔ 成功
+04:47:45 | INFO    | [main]    causal_impact      ✔ 成功
+04:47:45 | INFO    | [main]    csv_to_xlsx        ✔ 成功
+04:47:45 | INFO    | [main]    causal_engine      ✔ 成功
+04:47:45 | INFO    | [main]    filter_estimation  ✔ 成功
+04:47:45 | INFO    | [main]    correlated_plots   ✔ 成功
+04:47:45 | INFO    | [main]    ml_regression      ✔ 成功
+04:47:45 | INFO    | [main]    build_report       ✔ 成功
+04:47:45 | INFO    | [main] ================================================================
+04:47:45 | INFO    | [main] 📄 報告位置：/home/runner/work/cpi_causal_pipeline/cpi_causal_pipeline/cpi_causal_pipeline/../docs/index.html
